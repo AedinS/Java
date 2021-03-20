@@ -41,6 +41,7 @@ public class Capture {
 		} catch (Exception e) {
 			e.printStackTrace(); // Prints this throwable and its backtrace to the standard error stream
 		}
+		capture.setVisible(true);
 	}
 	
 }
