@@ -1,33 +1,67 @@
-package ch11;
+package ch12;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.Robot;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public class Capture {
-	
+	JButton btn;
+	JFrame capture;
 	
 	public static void main(String[] args) {
+		Capture c = new Capture();
+	}
+
+	Capture() {
+		long systemTime = System.currentTimeMillis();
+
+		
 		JFrame capture = new JFrame();
+		capture.setBounds(100, 100, 380, 300);
+		capture.setLocation(100,200);;
 		capture.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		Dimension d;
-		Rectangle rect = new Rectangle(500, 500);
-		capture.setSize(d=new Dimension(500,500));
+		JButton btn = new JButton("capture");
+		ActionListener listener = new Click();
+		btn.addActionListener(listener);
 		
+		JLabel quote = new JLabel("To know your Enemy, you must become your Enemy");
+		quote.setHorizontalAlignment(JLabel.CENTER);
+		quote.setForeground(Color.RED);
 		
+		// 출력 형태
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
+		// format에 맞게 출력하기 위한 문자열 변환
+		String dTime = formatter.format(systemTime);
+		JLabel time = new JLabel(dTime);
+		time.setHorizontalAlignment(JLabel.CENTER);
+		
+		capture.add(btn, BorderLayout.SOUTH);
+		capture.add(time, BorderLayout.NORTH);
+		capture.add(quote, BorderLayout.CENTER);
+		capture.setVisible(true);
+	}
+		
+}
+
+class Click implements ActionListener {
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Rectangle rect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+		JFrame capture = new JFrame();	
+		Dimension d = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
+		capture.setSize(d);
+
 		try {
 			// Robot 클래스- 테스트 목적으로 시스템의 입력 이벤트를 생성하는데 사용됨(주로 self-running demo)
 			Robot robot = new Robot();
 			// BufferedImage subclass- 접근 가능한 이미지 데이터 버퍼가 있는 이미지 묘
 			final BufferedImage img = robot.createScreenCapture(rect);
-			img.flush(); // 캡쳐
-			
 			JPanel panel = new JPanel() {
 				public void paintComponent(Graphics g) {
 					g.drawImage(img, 0, 0, d.width, d.height, this);
@@ -38,11 +72,12 @@ public class Capture {
 			panel.prepareImage(img, panel);
 			panel.repaint();
 			capture.getContentPane().add(panel);
-		} catch (Exception e) {
-			e.printStackTrace(); // Prints this throwable and its backtrace to the standard error stream
-		}
-		capture.setVisible(true);
-	}
-	
-}
+			img.flush(); // 캡쳐
+				
+			capture.setVisible(true);
 
+		} catch (Exception ex) {
+			ex.printStackTrace(); // Prints this throwable and its backtrace to the standard error stream
+		}
+	}
+}
